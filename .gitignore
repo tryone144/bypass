@@ -23,3 +23,10 @@ dep/libsoldout-1.3/mkd2latex
 dep/libsoldout-1.3/mkd2man
 test/*.tst
 *.class
++project.properties
++.classpath
++.project
++.settings/
++local.properties
++proguard-project.txt
+
