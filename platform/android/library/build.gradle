@@ -1,8 +1,21 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.0.0"
+    compileSdkVersion 8
+    buildToolsVersion "21.1.2"
+
+    archivesBaseName = "bypass"
+    version = "1.2"
+
+    libraryVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.aar')) {
+                def fileName = "${archivesBaseName}-${version}.aar"
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
+        }
+    }
 
     sourceSets.main {
         jni.srcDirs = []
@@ -13,5 +26,15 @@ android {
         res.srcDirs = ['res']
         assets.srcDirs = ['assets']
     }
+
+    // call regular ndk-build(.cmd) script from app directory
+    task ndkBuild(type: Exec) {
+        commandLine 'ndk-build'
+    }
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+    
+    artifacts.add("default", file("${archivesBaseName}-${version}.aar"))
 }
 
